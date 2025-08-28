@@ -1,0 +1,6 @@
+web3
+pytest
+pytest-mock
+testcontainers
+py-solc-x
+pytest-asyncio
