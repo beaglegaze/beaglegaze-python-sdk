@@ -1,5 +1,269 @@
 Metadata-Version: 2.4
 Name: beaglegaze
-Version: 0.1
+Version: 0.0.1
+Summary: Multi-Language Web3 Fee Collection Library
+Author-email: BeagleGaze Team <contact@beaglegaze.com>
+License: LGPL-3.0
+Project-URL: Homepage, https://github.com/beaglegaze/beaglegaze-python-sdk
+Project-URL: Repository, https://github.com/beaglegaze/beaglegaze-python-sdk
+Project-URL: Documentation, https://github.com/beaglegaze/beaglegaze-python-sdk#readme
+Project-URL: Bug Tracker, https://github.com/beaglegaze/beaglegaze-python-sdk/issues
+Keywords: blockchain,web3,ethereum,micropayments,smart-contracts
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Office/Business :: Financial
+Classifier: Topic :: Internet :: WWW/HTTP
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: web3
+Requires-Dist: py-solc-x
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pytest-mock; extra == "dev"
+Requires-Dist: pytest-asyncio; extra == "dev"
+Requires-Dist: testcontainers; extra == "dev"
+Provides-Extra: test
+Requires-Dist: pytest; extra == "test"
+Requires-Dist: pytest-mock; extra == "test"
+Requires-Dist: pytest-asyncio; extra == "test"
+Requires-Dist: testcontainers; extra == "test"
 Dynamic: license-file
+
+# 💰 Beaglegaze Python SDK - Multi-Language Web3 Fee Collection Library
+
+> Transform your software into a monetized service with blockchain-powered micro-payments.
+
+[![Java Build](https://github.com/steffenboe/beaglegaze/actions/workflows/mvnBuild.yml/badge.svg)](https://github.com/steffenboe/beaglegaze/actions/workflows/mvnBuild.yml)
+[![Python Tests](https://github.com/steffenboe/beaglegaze/actions/workflows/python-test.yml/badge.svg)](https://github.com/steffenboe/beaglegaze/actions/workflows/python-test.yml)
+[![Node.js Build](https://github.com/steffenboe/beaglegaze/actions/workflows/nodejs-build.yml/badge.svg)](https://github.com/steffenboe/beaglegaze/actions/workflows/nodejs-build.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-LGPLv3-blue.svg)](LICENSE)
+
+**beaglegaze** enables developers to seamlessly integrate fees collection into their libraries and services using blockchain technology. Users pre-fund a smart contract to access your code, and each function call triggers automatic micro-payments to registered contributors.
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [How It Works](#-how-it-works)
+- [Installation](#-installation)
+- [Examples](#-examples)
+  - [Python Example](#python-example)
+  - [Java Example](#java-example)
+- [Architecture](#-architecture)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+## ✨ Features
+
+- **🔗 Multi-language Support**: Available for Java and Python
+- **⚡ Asynchronous Processing**: Non-blocking fee collection with batch processing
+- **💳 Pre-funded Accounts**: Users fund smart contracts in advance
+- **🎯 Automatic Deduction**: Transparent fee collection on function calls
+- **🔒 Blockchain Security**: Ethereum-based smart contract infrastructure
+- **📊 Real-time Monitoring**: Track usage and payments in real-time
+
+## 🔄 How It Works
+
+![Beaglegaze Overview](docs/overview.png)
+
+1. **Pre-funding**: Clients deposit funds into the smart contract
+2. **Integration**: Developers integrate beaglegaze SDK into their libraries
+3. **Usage Tracking**: Function calls are automatically monitored
+4. **Fee Collection**: Micro-payments are deducted from client accounts
+5. **Distribution**: Payments are distributed to registered contributors
+
+> ⚠️ **Important**: Due to asynchronous processing, not every method invocation is immediately charged. Some calls may execute even with insufficient funding, but the library will eventually block when funds are depleted.
+
+## 📦 Installation
+
+### Prerequisites
+
+```bash
+npm install --global solc
+```
+
+### Local Development Setup
+
+1. **Install Virtual environment**
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install -r requirements.txt
+  pip install -e .
+  ```
+
+1. **Start Ethereum testnet**:
+   ```bash
+   docker buildx build -t hardhat-testnet testcontainer/
+   ```
+
+2. **Execute the tests**
+   ```
+   pytest
+   ```
+
+## 💡 Examples
+
+The following examples demonstrate the complete workflow:
+1. Deploy local Ethereum node with smart contract
+2. Integrate beaglegaze tracker into your code
+3. Attempt function calls without funding (fails)
+4. Fund the smart contract
+5. Successfully execute paid function calls
+
+### Python Example
+
+**Setup Environment**:
+```bash
+cd python-sdk
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+cd demo
+python -i monetized_lib.py
+```
+
+**Client Usage** (Interactive Python session):
+
+```python
+import asyncio
+
+async def main():
+    lib = MonetizedLibrary("0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc")
+    result = await lib.important_function()
+    print(result)
+
+asyncio.run(main())
+```
+
+**Expected Error** (Insufficient funding):
+```
+raise ContractLogicError(f"execution reverted: {message}", data=data)
+web3.exceptions.ContractLogicError: ("execution reverted: Error: VM Exception while processing transaction: reverted with reason string 'Insufficient client funding'", {'message': "Error: VM Exception while processing transaction: reverted with reason string 'Insufficient client funding'", 'data': '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001b496e73756666696369656e7420636c69656e742066756e64696e670000000000'})
+
+[...]
+
+line 24, in handle
+self._consume_from_contract(event)
+File "/home/steffenboe/projects/coss-metering/python-sdk/python-sdk/contract_consumer.py", line 47, in _consume_from_contract
+raise RuntimeError("Failed to consume from contract") from e
+RuntimeError: Failed to consume from contract
+```
+
+**Fund the Contract**:
+```bash
+python fund.py
+```
+
+**Successful Execution**:
+```python
+asyncio.run(main())
+```
+
+**Expected Output**:
+```
+Processing batch with sum 100...
+Executing important_function with args=() and kwargs={}
+Success
+```
+
+**Check Balance**:
+```python
+balance = contract.functions.getClientFunding().call({'from': client_account.address})
+print(f"client funding: {w3.from_wei(balance, 'ether')} ETH")
+# Output: client funding: 0.0999999999995618 ETH
+```
+
+### Java Example
+
+**Install Web3j**:
+```bash
+curl -L get.web3j.io | sh && source ~/.web3j/source.sh
+```
+
+**Setup Project**:
+```bash
+cd examples/java
+cp ../../deploy/hardhat-testnet/contracts/UsageContract.sol src/main/resources/contracts
+```
+
+**Compile Smart Contract**:
+```bash
+cd src/main/resources/contracts
+solcjs UsageContract.sol --abi --bin -o .
+cd ../../../../
+web3j generate solidity -b src/main/resources/contracts/UsageContract_sol_UsageContract.bin -a src/main/resources/contracts/UsageContract_sol_UsageContract.abi -o src/main/java -p com.example
+```
+
+**Test Without Funding** (Expected to fail):
+```bash
+mvn -Dtest=ClientTest test
+```
+
+**Expected Error**:
+```
+18:54:18.308 [ForkJoinPool.commonPool-worker-1] ERROR web3.beaglegaze.ContractConsumer -- Failed to consume from contract, switching to 'blocked' state. Refund the smart contract to continue using this library.
+java.lang.RuntimeException: Failed to consume from contract
+        at web3.beaglegaze.SmartContract.consume(SmartContract.java:48)
+        at web3.beaglegaze.ContractConsumer.consumeFromContract(ContractConsumer.java:57)
+        at web3.beaglegaze.ContractConsumer.handle(ContractConsumer.java:31)
+        at web3.beaglegaze.AsyncBatchProcessor.lambda$0(AsyncBatchProcessor.java:78)
+        at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+        at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
+        at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+        at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+        at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+        at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+        at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+Caused by: org.web3j.protocol.exceptions.TransactionException: {"message":"Error: VM Exception while processing transaction: reverted with reason string 'Insufficient client funding'","txHash":"0xc7f529bd3a7662be5d095b815823277ca99ba3454fde819e5add8d65a1ef491c","data":"0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001b496e73756666696369656e7420636c69656e742066756e64696e670000000000"}
+```
+
+**Fund the Contract**:
+```bash
+mvn -Dtest=FundTest test
+```
+
+**Test With Funding** (Should succeed):
+```bash
+mvn -Dtest=ClientTest test
+```
+
+**Expected Success Output**:
+```
+19:04:32.377 [main] INFO web3.beaglegaze.AsyncBatchProcessor -- Processing batch with sum 100...
+[Call tracked]: com.example.Main.main
+Successfully called main method!
+Called main 10 times
+```
+
+## 🏗️ Architecture
+
+beaglegaze uses a sophisticated architecture combining:
+
+- **Smart Contracts**: Ethereum-based payment and access control
+- **Async Processing**: Non-blocking fee collection with batching
+- **Multi-language SDKs**: Native integration for different platforms
+- **Real-time Monitoring**: Live tracking of usage and payments
+
+## 📄 License
+
+This project is licensed under the LGPL v3 License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ for the Web3 community</p>
+  <p>
+    <a href="#top">Back to Top</a> •
+    <a href="https://github.com/steffenboe/beaglegaze/issues">Report Bug</a> •
+    <a href="https://github.com/steffenboe/beaglegaze/issues">Request Feature</a>
+  </p>
+</div>
