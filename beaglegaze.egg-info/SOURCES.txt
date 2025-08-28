@@ -1,15 +1,6 @@
+LICENSE
+README.md
 setup.py
-beaglegaze/__init__.py
-beaglegaze/async_batch_processor.py
-beaglegaze/batch_mode.py
-beaglegaze/batch_ready_event.py
-beaglegaze/contract_consumer.py
-beaglegaze/demo.py
-beaglegaze/metering_event.py
-beaglegaze/metering_event_observer.py
-beaglegaze/pay_per_call.py
-beaglegaze/smart_contract.py
-beaglegaze/usage_logger.py
 beaglegaze.egg-info/PKG-INFO
 beaglegaze.egg-info/SOURCES.txt
 beaglegaze.egg-info/dependency_links.txt

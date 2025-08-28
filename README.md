@@ -32,7 +32,7 @@
 
 ## 🔄 How It Works
 
-![Payment Tracker Overview](docs/overview.png)
+![Beaglegaze Overview](docs/overview.png)
 
 1. **Pre-funding**: Clients deposit funds into the smart contract
 2. **Integration**: Developers integrate beaglegaze SDK into their libraries
@@ -52,16 +52,22 @@ npm install --global solc
 
 ### Local Development Setup
 
+1. **Install Virtual environment**
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install -r requirements.txt
+  pip install -e .
+  ```
+
 1. **Start Ethereum testnet**:
    ```bash
-   docker buildx build -t hardhat-testnet deploy/hardhat-testnet/.
-   docker run -d -p 8545:8545 --rm --name hardhat-testnet hardhat-testnet
+   docker buildx build -t hardhat-testnet testcontainer/
    ```
 
-2. **Note the contract address** from the deployment logs:
+2. **Execute the tests**
    ```
-   🎉 Deployment completed successfully!
-   Contract address: 0x289B72CEeaB48832261626D62E3daA87Fd90B024
+   pytest
    ```
 
 ## 💡 Examples
