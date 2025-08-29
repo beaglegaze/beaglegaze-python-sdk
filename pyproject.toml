@@ -122,3 +122,4 @@ ensure_newline_before_comments = true
 
 [tool.setuptools_scm]
 write_to = "src/beaglegaze/_version.py"
+local_scheme = "no-local-version"
