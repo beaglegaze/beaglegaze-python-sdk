@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     needs: python
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
         run: twine check dist/*
 
       - name: Check package
-        run: twine upload -r testpypi dist/*
+        run: twine upload --skip-existing --verbose -r testpypi dist/*
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
