@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel", "setuptools-scm"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "beaglegaze"
-dynamic = ["version"]
+version = "0.0.2.dev0"
 description = "Multi-Language Web3 Fee Collection Library"
 readme = "README.md"
 license = {text = "LGPL-3.0"}
@@ -120,6 +120,3 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 
-[tool.setuptools_scm]
-write_to = "src/beaglegaze/_version.py"
-local_scheme = "no-local-version"
