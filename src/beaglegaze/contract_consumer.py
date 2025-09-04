@@ -36,7 +36,19 @@ class ContractConsumer(MeteringEventObserver):
 
     def _consume_from_contract(self, batch_event: BatchReadyEvent):
         try:
-            self.contract.consume(batch_event.batch_sum)
+            # Check if client has valid subscription first
+            has_subscription = False
+            try:
+                has_subscription = self.contract.has_valid_subscription()
+            except Exception as e:
+                logger.warning(f"Failed to check subscription status, falling back to consumption: {e}")
+                has_subscription = False
+            
+            if has_subscription:
+                logger.debug("Client has valid NFT subscription, skipping consumption")
+                return
+            else:
+                self.contract.consume(batch_event.batch_sum)
         except Exception as e:
             self.blocked = True
             logger.error(

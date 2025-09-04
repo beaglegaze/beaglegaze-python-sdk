@@ -9,7 +9,10 @@ INSUFFICIENT_FUNDS = 50
 
 @pytest.fixture
 def mock_smart_contract(mocker):
-    return mocker.Mock()
+    mock = mocker.Mock()
+    # Mock has_valid_subscription to return False by default for existing tests
+    mock.has_valid_subscription.return_value = False
+    return mock
 
 @pytest.fixture
 def contract_consumer(mock_smart_contract):
