@@ -21,8 +21,8 @@ def deployed_contract(w3):
 
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
     account = w3.eth.account.from_key(SMART_CONTRACT_OWNER)
-
-    tx_hash = contract.constructor().build_transaction({
+    subscription_price = 1000000000000000000  # 1 ETH in wei
+    tx_hash = contract.constructor(subscription_price).build_transaction({
         'from': account.address,
         'nonce': w3.eth.get_transaction_count(account.address),
     })
