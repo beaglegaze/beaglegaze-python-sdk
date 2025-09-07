@@ -17,8 +17,8 @@ def deployed_contract(w3):
 
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
     account = w3.eth.account.from_key(SMART_CONTRACT_OWNER)
-
-    tx_hash = contract.constructor().build_transaction({
+    subscription_price = 1000000000000000000  # 1 ETH in wei
+    tx_hash = contract.constructor(subscription_price).build_transaction({
         'from': account.address,
         'nonce': w3.eth.get_transaction_count(account.address),
     })
@@ -37,6 +37,23 @@ def load_contract_for_account(w3, contract_address, private_key):
 async def test_should_register_contract_owner_as_first_developer(w3, deployed_contract):
     owner_account = w3.eth.account.from_key(SMART_CONTRACT_OWNER)
     assert deployed_contract.functions.isDeveloper().call({'from': owner_account.address})
+
+
+def test_usage_contract_constructor_requires_subscription_price(w3):
+    with open('contracts/UsageContract_sol_UsageContract.abi', 'r') as f:
+        abi = json.load(f)
+    with open('contracts/UsageContract_sol_UsageContract.bin', 'r') as f:
+        bytecode = f.read()
+
+    contract = w3.eth.contract(abi=abi, bytecode=bytecode)
+    account = w3.eth.account.from_key(SMART_CONTRACT_OWNER)
+
+    # Try to deploy without the required argument
+    with pytest.raises(TypeError):
+        contract.constructor().build_transaction({
+            'from': account.address,
+            'nonce': w3.eth.get_transaction_count(account.address),
+        })
 
 @pytest.mark.asyncio
 async def test_should_register_second_developer_with_owner_approval(w3, deployed_contract):

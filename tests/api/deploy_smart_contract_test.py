@@ -13,6 +13,7 @@ class TestDeploySmartContract:
             self.abi = json.load(f)
         with open('beaglegaze-python-sdk/contracts/UsageContract_sol_UsageContract.bin', 'r') as f:
             self.bytecode = f.read()
+        self.subscription_price = 1000000000000000000  # 1 ETH in wei
 
     def test_setup_local_eth_node(self):
         self.deploy_smart_contract()
@@ -28,7 +29,7 @@ class TestDeploySmartContract:
         })
 
         signed_tx = self.w3.eth.account.sign_transaction(tx_hash, private_key=account.key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
         global SMART_CONTRACT_ADDRESS
         SMART_CONTRACT_ADDRESS = receipt.contractAddress
@@ -45,7 +46,7 @@ class TestDeploySmartContract:
             'from': account.address
         }
         signed_tx = self.w3.eth.account.sign_transaction(tx, private_key=account.key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         print(f"Transaction hash: {tx_hash.hex()}")
 
     def fund_as_client(self):
@@ -59,7 +60,7 @@ class TestDeploySmartContract:
         })
 
         signed_tx = self.w3.eth.account.sign_transaction(tx_hash, private_key=client_account.key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
         print(f"Transaction hash: {receipt.transactionHash.hex()}")
 

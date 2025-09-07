@@ -42,3 +42,10 @@ class SmartContract:
         except Exception as e:
             print(f"Failed to get client funding: {e}")
             return 0
+
+    def has_valid_subscription(self):
+        try:
+            return self.contract.functions.hasValidSubscription().call({'from': self.client_account.address})
+        except Exception as e:
+            print(f"Failed to check subscription status: {e}")
+            return False
